@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /passejades/{id} {
+      allow read, delete: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll(['persona', 'minuts', 'ts'])
+        && request.resource.data.keys().hasOnly(['persona', 'minuts', 'ts'])
+        && request.resource.data.persona in ['Pau', 'Rita', 'Mama', 'Papa']
+        && request.resource.data.ts is int
+        && (request.resource.data.minuts == null
+            || (request.resource.data.minuts is int
+                && request.resource.data.minuts >= 1
+                && request.resource.data.minuts <= 300));
+      allow update: if false;
+    }
+  }
+}

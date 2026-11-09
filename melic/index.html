@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Passejades del Melic</title>
+<meta name="theme-color" content="#E8833A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Melic">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+  :root{
+    --bg:#FFF7EC; --card:#FFFFFF; --ink:#3B2A1E; --muted:#8A7564; --line:#F0E2D0;
+    --main:#E8833A; --main-deep:#C96621; --soft:#FDEBD8;
+    --Pau:#3B82F6; --Rita:#A855F7; --Mama:#E5487F; --Papa:#10A37F;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif}
+  body{padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 28px);
+    max-width:520px;margin:0 auto}
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+
+  header{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 14px}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo .gos{font-size:34px;display:inline-block}
+  .logo h1{font-size:22px;margin:0;line-height:1.1}
+  .logo small{display:block;font-size:13px;color:var(--muted);font-weight:500}
+  .jo{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;
+    background:var(--card);border:1px solid var(--line);font-weight:600;font-size:15px}
+
+  .avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    color:#fff;font-weight:700;font-size:14px;flex:none}
+
+  .banner{background:#FFF1C9;border:1px solid #F3D98A;color:#6B5310;border-radius:14px;
+    padding:10px 12px;font-size:13.5px;margin-bottom:12px;line-height:1.4}
+  .banner.error{background:#FDE2E2;border-color:#F5B5B5;color:#7A1F1F}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px;
+    box-shadow:0 1px 0 rgba(59,42,30,.03)}
+  .card h2{font-size:15px;margin:0 0 12px;color:var(--muted);font-weight:600;letter-spacing:.2px}
+
+  .estat{display:flex;gap:10px}
+  .estat .num{flex:1;background:var(--soft);border-radius:14px;padding:12px}
+  .estat b{display:block;font-size:26px;line-height:1.1}
+  .estat span{font-size:13px;color:var(--muted)}
+  .ultima{margin-top:10px;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  .ultima.alerta{color:#B4441B;font-weight:600}
+
+  .chips{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
+  .chip{padding:10px 0;border-radius:999px;background:var(--soft);font-weight:600;font-size:15px;border:2px solid transparent}
+  .chip.on{background:#fff;border-color:var(--main);color:var(--main-deep)}
+  .altres{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:14px;color:var(--muted)}
+  .altres input{width:84px;padding:9px 10px;border-radius:12px;border:1px solid var(--line);font:inherit;
+    font-size:16px;color:var(--ink);background:#fff}
+  .gran{width:100%;padding:18px;border-radius:18px;background:var(--main);color:#fff;font-size:20px;font-weight:700;
+    box-shadow:0 6px 0 var(--main-deep);transition:transform .08s, box-shadow .08s}
+  .gran:active{transform:translateY(4px);box-shadow:0 2px 0 var(--main-deep)}
+  .gran:disabled{opacity:.6}
+
+  .seg{display:flex;background:var(--soft);border-radius:12px;padding:3px;margin-bottom:10px}
+  .seg button{flex:1;padding:8px 4px;border-radius:10px;font-size:14px;font-weight:600;color:var(--muted)}
+  .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+  .fila{display:flex;align-items:center;gap:10px;padding:9px 0}
+  .fila + .fila{border-top:1px solid var(--line)}
+  .pos{width:26px;text-align:center;font-size:20px;flex:none}
+  .pos.n{font-size:15px;color:var(--muted);font-weight:700}
+  .info{flex:1;min-width:0}
+  .nom{display:flex;justify-content:space-between;font-weight:600;font-size:15px}
+  .nom em{font-style:normal;font-weight:700}
+  .barra{height:8px;border-radius:8px;background:var(--soft);margin:6px 0 3px;overflow:hidden}
+  .barra i{display:block;height:100%;border-radius:8px;transition:width .4s}
+  .sub{font-size:12.5px;color:var(--muted)}
+  .total{margin-top:8px;font-size:13px;color:var(--muted);text-align:right}
+
+  .dia{font-size:13px;font-weight:700;color:var(--muted);margin:12px 0 4px;text-transform:capitalize}
+  .dia:first-child{margin-top:0}
+  .reg{display:flex;align-items:center;gap:10px;padding:7px 0}
+  .reg .t{flex:1;font-size:15px}
+  .reg .t small{color:var(--muted)}
+  .reg .x{width:32px;height:32px;border-radius:50%;color:var(--muted);font-size:18px}
+  .reg .x:active{background:var(--soft)}
+  .buit{color:var(--muted);font-size:14px;text-align:center;padding:10px 0}
+  .mes{width:100%;padding:10px;margin-top:6px;border-radius:12px;background:var(--soft);font-weight:600;font-size:14px}
+
+  .modal{position:fixed;inset:0;background:rgba(59,42,30,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}
+  .modal.on{display:flex}
+  .full{background:var(--bg);width:100%;max-width:520px;border-radius:24px 24px 0 0;
+    padding:22px 18px calc(env(safe-area-inset-bottom) + 22px)}
+  .full h3{margin:0 0 4px;font-size:21px}
+  .full p{margin:0 0 16px;color:var(--muted);font-size:14px}
+  .persones{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .persones button{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 10px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:700;font-size:17px}
+  .persones .avatar{width:48px;height:48px;font-size:20px}
+
+  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translate(-50%,30px);
+    background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-weight:600;font-size:15px;
+    opacity:0;transition:.25s;pointer-events:none;z-index:20;max-width:90vw;text-align:center}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  @keyframes salt{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-12px) rotate(-10deg)}60%{transform:translateY(0) rotate(8deg)}}
+  .salta{animation:salt .7s ease}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="gos" id="gos">🐕</span>
+    <div><h1>Melic</h1><small>Passejades en família</small></div>
+  </div>
+  <button class="jo" id="botoJo" aria-label="Canviar de persona"></button>
+</header>
+
+<div id="avisos"></div>
+
+<section class="card">
+  <div class="estat">
+    <div class="num"><b id="avuiN">–</b><span>sortides avui</span></div>
+    <div class="num"><b id="avuiM">–</b><span>minuts avui</span></div>
+  </div>
+  <div class="ultima" id="ultima"></div>
+</section>
+
+<section class="card">
+  <h2>Nova passejada · quants minuts? <span style="font-weight:400">(opcional)</span></h2>
+  <div class="chips" id="chips"></div>
+  <div class="altres">Altres: <input id="minutsLliure" type="number" inputmode="numeric" min="1" max="300" placeholder="min"> minuts</div>
+  <button class="gran" id="botoApuntar">He tret el Melic! 🐾</button>
+</section>
+
+<section class="card">
+  <h2>🏆 Rànquing</h2>
+  <div class="seg" id="segPeriode">
+    <button data-v="setmana">Setmana</button><button data-v="mes">Mes</button><button data-v="any">Any</button>
+  </div>
+  <div class="seg" id="segMetrica">
+    <button data-v="vegades">Per sortides</button><button data-v="minuts">Per minuts</button>
+  </div>
+  <div id="ranquing"></div>
+  <div class="total" id="totalPeriode"></div>
+</section>
+
+<section class="card">
+  <h2>📋 Historial</h2>
+  <div id="historial"></div>
+</section>
+
+<div class="modal" id="modalQui">
+  <div class="full">
+    <h3>Qui ets? 👋</h3>
+    <p>Tria el teu nom. Es recordarà en aquest mòbil (el pots canviar tocant-lo a dalt).</p>
+    <div class="persones" id="llistaPersones"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { firebaseConfig } from './config.js';
+
+/* ---------- Dades fixes ---------- */
+const PERSONES = ['Pau', 'Rita', 'Mama', 'Papa'];
+const color = (p) => `var(--${p})`;
+const MINUTS_RAPIDS = [10, 15, 20, 30, 45, 60];
+const $ = (id) => document.getElementById(id);
+
+/* ---------- Estat ---------- */
+let jo = localStorage.getItem('melic-jo');
+let passejades = [];
+let minutsTriats = null;
+let periode = localStorage.getItem('melic-periode') || 'setmana';
+let metrica = localStorage.getItem('melic-metrica') || 'vegades';
+let veureTot = false;
+let store;
+
+/* ---------- Emmagatzematge ---------- */
+const configurat = firebaseConfig?.apiKey && !firebaseConfig.apiKey.startsWith('POSA');
+
+function storeLocal() {
+  const CLAU = 'melic-demo';
+  const llegir = () => { try { return JSON.parse(localStorage.getItem(CLAU)) || []; } catch { return []; } };
+  let oients = [];
+  const avisar = () => { const d = llegir().sort((a, b) => b.ts - a.ts); oients.forEach((f) => f(d)); };
+  return {
+    subscribe(cb) { oients.push(cb); avisar(); },
+    add(e) { const d = llegir(); d.push({ id: crypto.randomUUID(), ...e }); localStorage.setItem(CLAU, JSON.stringify(d)); avisar(); },
+    remove(id) { localStorage.setItem(CLAU, JSON.stringify(llegir().filter((x) => x.id !== id))); avisar(); }
+  };
+}
+
+async function storeFirebase() {
+  const B = 'https://www.gstatic.com/firebasejs/10.12.2/';
+  const [fa, fs, fauth] = await Promise.all([
+    import(B + 'firebase-app.js'), import(B + 'firebase-firestore.js'), import(B + 'firebase-auth.js')
+  ]);
+  const app = fa.initializeApp(firebaseConfig);
+
+  // Inici de sessió anònim (cap contrasenya): només serveix perquè les regles de seguretat
+  // deixin entrar l'app i no qualsevol petició sense sessió.
+  const auth = fauth.getAuth(app);
+  await auth.authStateReady();
+  if (!auth.currentUser) await fauth.signInAnonymously(auth);
+
+  // Memòria cau local: si apuntes una passejada sense cobertura, es puja quan torni la connexió.
+  const db = fs.initializeFirestore(app, {
+    localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() })
+  });
+  const col = fs.collection(db, 'passejades');
+  const desDe = Date.now() - 370 * 864e5; // només el darrer any (per no gastar lectures)
+
+  return {
+    subscribe(cb, err) {
+      fs.onSnapshot(fs.query(col, fs.where('ts', '>=', desDe), fs.orderBy('ts', 'desc')),
+        (s) => cb(s.docs.map((d) => ({ id: d.id, ...d.data() }))), err);
+    },
+    add(e) { fs.addDoc(col, e).catch(errorGuardar); },  // sense await: funciona també sense xarxa
+    remove(id) { fs.deleteDoc(fs.doc(db, 'passejades', id)).catch(errorGuardar); }
+  };
+}
+
+function errorGuardar(e) { console.error(e); avis('No s\'ha pogut desar a la base de dades: ' + e.message, true); }
+
+function avis(text, error = false) {
+  $('avisos').innerHTML = `<div class="banner ${error ? 'error' : ''}">${text}</div>`;
+}
+
+/* ---------- Utilitats de dates ---------- */
+const DIA = 864e5;
+const iniciDia = (t = Date.now()) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+function iniciPeriode(p) {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  if (p === 'setmana') d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // dilluns
+  if (p === 'mes') d.setDate(1);
+  if (p === 'any') d.setMonth(0, 1);
+  return d.getTime();
+}
+const hora = (t) => new Date(t).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' });
+function faTemps(t) {
+  const m = Math.floor((Date.now() - t) / 60000);
+  if (m < 1) return 'ara mateix';
+  if (m < 60) return `fa ${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `fa ${h} h${m % 60 && h < 5 ? ' ' + (m % 60) + ' min' : ''}`;
+  const d = Math.floor(h / 24);
+  return d === 1 ? 'fa 1 dia' : `fa ${d} dies`;
+}
+function nomDia(t) {
+  const avui = iniciDia();
+  if (t >= avui) return 'Avui';
+  if (t >= avui - DIA) return 'Ahir';
+  return new Date(t).toLocaleDateString('ca-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+const fmtMin = (m) => m >= 60 ? `${Math.floor(m / 60)} h ${m % 60 ? (m % 60) + ' min' : ''}`.trim() : `${m} min`;
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const avatar = (p, mida = '') => `<span class="avatar" style="background:${color(p)};${mida}">${esc(p[0])}</span>`;
+
+/* ---------- Pintar ---------- */
+function pintarJo() {
+  $('botoJo').innerHTML = jo ? `${avatar(jo)} ${esc(jo)}` : 'Qui ets?';
+}
+
+function pintarEstat() {
+  const avui = passejades.filter((x) => x.ts >= iniciDia());
+  $('avuiN').textContent = avui.length;
+  $('avuiM').textContent = avui.reduce((s, x) => s + (x.minuts || 0), 0);
+  const u = passejades[0];
+  const el = $('ultima');
+  if (!u) { el.className = 'ultima'; el.textContent = 'Encara no hi ha cap passejada apuntada.'; return; }
+  const hores = (Date.now() - u.ts) / 3600000;
+  el.className = 'ultima' + (hores >= 8 ? ' alerta' : '');
+  el.innerHTML = `${avatar(u.persona, 'width:22px;height:22px;font-size:11px')}
+    <span>${hores >= 8 ? '⚠️ ' : ''}Última sortida ${faTemps(u.ts)} · ${esc(u.persona)}${u.minuts ? ` · ${u.minuts} min` : ''}</span>`;
+}
+
+function pintarChips() {
+  $('chips').innerHTML = MINUTS_RAPIDS.map((m) =>
+    `<button class="chip ${minutsTriats === m ? 'on' : ''}" data-m="${m}">${m}'</button>`).join('');
+}
+
+function pintarSeg(id, valor) {
+  $(id).querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.v === valor));
+}
+
+function pintarRanquing() {
+  pintarSeg('segPeriode', periode); pintarSeg('segMetrica', metrica);
+  const des = iniciPeriode(periode);
+  const dins = passejades.filter((x) => x.ts >= des);
+  const stats = PERSONES.map((p) => {
+    const seves = dins.filter((x) => x.persona === p);
+    return { p, vegades: seves.length, minuts: seves.reduce((s, x) => s + (x.minuts || 0), 0) };
+  });
+  const alt = metrica === 'vegades' ? 'minuts' : 'vegades';
+  stats.sort((a, b) => b[metrica] - a[metrica] || b[alt] - a[alt]);
+  const max = Math.max(1, ...stats.map((s) => s[metrica]));
+  const medalles = ['🥇', '🥈', '🥉'];
+  let pos = 0, anterior = null;
+  $('ranquing').innerHTML = stats.map((s, i) => {
+    if (s[metrica] !== anterior) { pos = i; anterior = s[metrica]; }
+    const icona = s[metrica] > 0 && pos < 3 ? `<span class="pos">${medalles[pos]}</span>` : `<span class="pos n">${pos + 1}</span>`;
+    const valor = metrica === 'vegades' ? `${s.vegades} ${s.vegades === 1 ? 'sortida' : 'sortides'}` : fmtMin(s.minuts);
+    const extra = metrica === 'vegades' ? fmtMin(s.minuts) : `${s.vegades} ${s.vegades === 1 ? 'sortida' : 'sortides'}`;
+    return `<div class="fila">${icona}${avatar(s.p)}
+      <div class="info"><div class="nom"><span>${esc(s.p)}</span><em>${valor}</em></div>
+      <div class="barra"><i style="width:${(s[metrica] / max) * 100}%;background:${color(s.p)}"></i></div>
+      <div class="sub">${extra}</div></div></div>`;
+  }).join('');
+  const totalMin = dins.reduce((s, x) => s + (x.minuts || 0), 0);
+  $('totalPeriode').textContent = `Total del Melic: ${dins.length} ${dins.length === 1 ? 'sortida' : 'sortides'} · ${fmtMin(totalMin)}`;
+}
+
+function pintarHistorial() {
+  if (!passejades.length) { $('historial').innerHTML = '<div class="buit">Quan algú tregui el Melic, sortirà aquí. 🐶</div>'; return; }
+  const llista = veureTot ? passejades : passejades.slice(0, 15);
+  let html = '', diaActual = '';
+  for (const x of llista) {
+    const d = nomDia(x.ts);
+    if (d !== diaActual) { html += `<div class="dia">${d}</div>`; diaActual = d; }
+    html += `<div class="reg">${avatar(x.persona)}
+      <div class="t"><b>${esc(x.persona)}</b> <small>· ${hora(x.ts)}${x.minuts ? ` · ${x.minuts} min` : ''}</small></div>
+      <button class="x" data-id="${esc(x.id)}" aria-label="Esborrar">✕</button></div>`;
+  }
+  if (passejades.length > 15) html += `<button class="mes" id="botoMes">${veureTot ? 'Veure menys' : `Veure-ho tot (${passejades.length})`}</button>`;
+  $('historial').innerHTML = html;
+}
+
+function pintarTot() { pintarJo(); pintarEstat(); pintarRanquing(); pintarHistorial(); }
+
+/* ---------- Accions ---------- */
+function toast(text) {
+  const t = $('toast'); t.textContent = text; t.classList.add('on');
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+function obrirQui() {
+  $('llistaPersones').innerHTML = PERSONES.map((p) => `<button data-p="${p}">${avatar(p)}${p}</button>`).join('');
+  $('modalQui').classList.add('on');
+}
+
+$('llistaPersones').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-p]'); if (!b) return;
+  jo = b.dataset.p; localStorage.setItem('melic-jo', jo);
+  $('modalQui').classList.remove('on'); pintarJo();
+});
+$('botoJo').addEventListener('click', obrirQui);
+
+$('chips').addEventListener('click', (e) => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  const m = Number(b.dataset.m);
+  minutsTriats = minutsTriats === m ? null : m;
+  $('minutsLliure').value = '';
+  pintarChips();
+});
+$('minutsLliure').addEventListener('input', () => { minutsTriats = null; pintarChips(); });
+
+$('botoApuntar').addEventListener('click', () => {
+  if (!jo) { obrirQui(); return; }
+  if (!store) { toast('Encara s\'està connectant…'); return; }
+  let minuts = minutsTriats;
+  const lliure = parseInt($('minutsLliure').value, 10);
+  if (!minuts && lliure) minuts = lliure;
+  if (minuts != null && (minuts < 1 || minuts > 300)) { toast('Posa entre 1 i 300 minuts'); return; }
+  store.add({ persona: jo, minuts: minuts ?? null, ts: Date.now() });
+  minutsTriats = null; $('minutsLliure').value = ''; pintarChips();
+  navigator.vibrate?.(40);
+  const g = $('gos'); g.classList.remove('salta'); void g.offsetWidth; g.classList.add('salta');
+  const frases = ['El Melic t\'ho agraeix! 🐶', 'Bona feina! 🦴', 'Cua remenant a tope! 🐕', 'Melic feliç! 🐾'];
+  toast(`${jo}: ${frases[Math.floor(Math.random() * frases.length)]}`);
+});
+
+$('segPeriode').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  periode = b.dataset.v; localStorage.setItem('melic-periode', periode); pintarRanquing();
+});
+$('segMetrica').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  metrica = b.dataset.v; localStorage.setItem('melic-metrica', metrica); pintarRanquing();
+});
+
+$('historial').addEventListener('click', (e) => {
+  if (e.target.id === 'botoMes') { veureTot = !veureTot; pintarHistorial(); return; }
+  const b = e.target.closest('.x'); if (!b) return;
+  const x = passejades.find((p) => p.id === b.dataset.id); if (!x) return;
+  if (confirm(`Esborrar la passejada de ${x.persona} (${nomDia(x.ts).toLowerCase()} a les ${hora(x.ts)})?`)) {
+    store.remove(x.id); toast('Esborrada');
+  }
+});
+
+/* ---------- Arrencada ---------- */
+pintarChips(); pintarTot();
+if (!jo) obrirQui();
+setInterval(() => { pintarEstat(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) pintarTot(); });
+
+(async () => {
+  try {
+    if (configurat) {
+      store = await storeFirebase();
+    } else {
+      store = storeLocal();
+      avis('🧪 <b>Mode prova:</b> les dades només es guarden en aquest mòbil. Configura Firebase a <code>config.js</code> per compartir-les entre els 4.');
+    }
+    store.subscribe((d) => { passejades = d; pintarTot(); },
+      (e) => { console.error(e); avis('No es poden llegir les dades: ' + e.message, true); });
+  } catch (e) {
+    console.error(e);
+    avis('No s\'ha pogut connectar amb la base de dades. Comprova la connexió i la configuració de Firebase. (' + esc(e.message) + ')', true);
+  }
+})();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
