@@ -33,7 +33,7 @@
       nav: ["Formación", "Experiencia", "Proyectos", "Conocimientos", "Contacto"], fotos: "Fotografía", volver: "Volver al CV",
       formacion: "Formación", experiencia: "Experiencia", proyectos: "Proyectos", proyectosNota: "Código e informe de cada uno en GitHub.",
       conocimientos: "Conocimientos", conocimientosNota: "Haz clic en un área para ver el detalle.", contacto: "Contacto",
-      codigo: "Código", informe: "Informe", cvEs: "CV en PDF ↓", cvEn: "CV in English ↓",
+      codigo: "Código", informe: "Informe", cvEs: "CV en PDF ↓", cvCa: "CV en catalán ↓", cvEn: "CV in English ↓",
       habilidades: "Habilidades técnicas", idiomas: "Idiomas", nivel: ["", "Básico", "Elemental", "Intermedio", "Avanzado", "Experto"],
       nivelDe: (n) => `Nivel ${n} de 5`, verFigura: "Ampliar figura", figuraOriginal: "Ver figura original",
       fotosSub: "Algunas fotos que he hecho.", fotosVacio: "Galería en preparación.",
@@ -44,7 +44,7 @@
       nav: ["Formació", "Experiència", "Projectes", "Coneixements", "Contacte"], fotos: "Fotografia", volver: "Tornar al CV",
       formacion: "Formació", experiencia: "Experiència", proyectos: "Projectes", proyectosNota: "Codi i informe de cadascun a GitHub.",
       conocimientos: "Coneixements", conocimientosNota: "Fes clic en una àrea per veure'n el detall.", contacto: "Contacte",
-      codigo: "Codi", informe: "Informe", cvEs: "CV en castellà ↓", cvEn: "CV en anglès ↓",
+      codigo: "Codi", informe: "Informe", cvEs: "CV en castellà ↓", cvCa: "CV en PDF ↓", cvEn: "CV en anglès ↓",
       habilidades: "Habilitats tècniques", idiomas: "Idiomes", nivel: ["", "Bàsic", "Elemental", "Intermedi", "Avançat", "Expert"],
       nivelDe: (n) => `Nivell ${n} de 5`, verFigura: "Amplia la figura", figuraOriginal: "Veure la figura original",
       fotosSub: "Algunes fotos que he fet.", fotosVacio: "Galeria en preparació.",
@@ -55,7 +55,7 @@
       nav: ["Education", "Experience", "Projects", "Knowledge", "Contact"], fotos: "Photography", volver: "Back to CV",
       formacion: "Education", experiencia: "Experience", proyectos: "Projects", proyectosNota: "Code and report for each one on GitHub.",
       conocimientos: "Knowledge", conocimientosNota: "Click an area to see the details.", contacto: "Contact",
-      codigo: "Code", informe: "Report", cvEs: "CV in Spanish ↓", cvEn: "CV in English ↓",
+      codigo: "Code", informe: "Report", cvEs: "CV in Spanish ↓", cvCa: "CV in Catalan ↓", cvEn: "CV in English ↓",
       habilidades: "Technical skills", idiomas: "Languages", nivel: ["", "Basic", "Elementary", "Intermediate", "Advanced", "Expert"],
       nivelDe: (n) => `Level ${n} of 5`, verFigura: "Enlarge figure", figuraOriginal: "View original figure",
       fotosSub: "Some photos I have taken.", fotosVacio: "Gallery coming soon.",
@@ -118,6 +118,14 @@
       <div class="section__body">${body}</div>
     </section>`;
 
+  /* Enlaces al CV: el del idioma de la página y, además, el inglés (o el castellano si la página está en inglés) */
+  function cvLinks(p) {
+    const cv = { es: [p.cvPdf, UI.cvEs], ca: [p.cvPdfCa, UI.cvCa], en: [p.cvPdfEn, UI.cvEn] };
+    const order = LANG === "en" ? ["en", "es"] : [LANG, "en"];
+    return order.filter((l) => cv[l][0]).map((l) =>
+      `<a href="${esc(cv[l][0])}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(cv[l][0])}" hidden>${cv[l][1]}</a>`).join("");
+  }
+
   function hero() {
     const p = S.perfil;
     return `
@@ -130,7 +138,7 @@
               <a href="mailto:${esc(p.email)}">${esc(p.email)}</a>
               <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
               ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-              <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>${UI.cvEs}</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>${UI.cvEn}</a>` : ""}
+              ${cvLinks(p)}
             </div>
           </div>
         </div>
@@ -300,7 +308,7 @@
       <div class="contact__links">
         <a ${ext(p.linkedin)}>LinkedIn ${arrow}</a>
         ${github ? `<a ${ext(github)}>GitHub ${arrow}</a>` : ""}
-        <a href="${esc(p.cvPdf)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdf)}" hidden>${UI.cvEs}</a>${p.cvPdfEn ? `<a href="${esc(p.cvPdfEn)}" target="_blank" rel="noopener" class="cv-link" data-src="${esc(p.cvPdfEn)}" hidden>${UI.cvEn}</a>` : ""}
+        ${cvLinks(p)}
       </div>`;
   }
 
